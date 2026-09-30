@@ -1,0 +1,187 @@
+# route: cloudkitchens
+query RestrictedStorefrontMergedByKey($key: StorefrontMultiKeyInput!, $settingsQuery: MerchantSettingsQueryInput) {
+  restrictedStorefrontMergedByKey(key: $key) {
+    settings(settingsQuery: $settingsQuery) {
+      settingKey {
+        ...MerchantSettingKey
+      }
+      versionedSettingValue {
+        ...VersionedMerchantSettingValue
+      }
+    }
+  }
+}
+
+fragment MerchantSettingKey on MerchantSettingKey {
+  settingSlug
+  settingNamespace
+}
+
+fragment VersionedMerchantSettingValue on VersionedMerchantSettingValue {
+  settingValue {
+    ...MerchantSettingValue
+  }
+  sequenceNumber
+}
+
+fragment MerchantSettingValue on MerchantSettingValue {
+  ... on IntegerValueWrapper {
+    integerValue: value
+  }
+  ... on IntegerListValueWrapper {
+    integerValues: value
+  }
+  ... on StringValueWrapper {
+    stringValue: value
+  }
+  ... on StringListValueWrapper {
+    stringValues: value
+  }
+  ... on AllSelectedWrapper {
+    allSelected
+  }
+  ... on LocalizedStringListValueWrapper {
+    value {
+      ...LocalizedString
+    }
+  }
+  ... on FloatValueWrapper {
+    floatValue: value
+  }
+  ... on BooleanValueWrapper {
+    booleanValue: value
+  }
+  ... on Money {
+    currencyCode
+    nanos
+    units
+  }
+  ... on DrivingDistance {
+    drivingDistance {
+      amount
+      unit
+    }
+  }
+  ... on Discount {
+    id
+    name
+    percentage
+    isRestricted
+  }
+  ... on StorefrontTipsConfig {
+    ...StorefrontTipsConfig
+  }
+  ... on StorefrontDeliveryFees {
+    ...StorefrontDeliveryFees
+  }
+  ... on RestrictedFile {
+    __typename
+    id
+    sizeBytes
+    fileType
+    fileName
+    url
+  }
+  ... on RestrictedImage {
+    __typename
+    id
+    sizeBytes
+    fileType
+    photoWidth
+    fileName
+    photoHeight
+    url
+  }
+  ... on MerchantSettingDeliveryArea {
+    deliveryAreaValue {
+      ... on DrivingDistanceLimit {
+        __typename
+        distance {
+          ...Distance
+        }
+      }
+      ... on StraightLineLimit {
+        __typename
+        distance {
+          ...Distance
+        }
+      }
+      ... on Polygons {
+        __typename
+        polygons {
+          polygon {
+            latitude
+            longitude
+          }
+        }
+      }
+    }
+  }
+  ... on MerchantSettingKdsCardHeader {
+    setting {
+      ... on FulfillmentModeColors {
+        deliveryColor
+        pickUpColor
+        dineInColor
+        driveThroughColor
+        toGoColor
+      }
+      ... on UrgencyModeTimerDurations {
+        redTimerDurationInMinutes
+        yellowTimerDurationInMinutes
+      }
+    }
+  }
+  ... on MerchantSettingNotificationPreference {
+    __typename
+    dismissMode
+    sound
+  }
+}
+
+fragment LocalizedString on LocalizedString {
+  locale
+  value
+}
+
+fragment StorefrontTipsConfig on StorefrontTipsConfig {
+  allowTips
+  breakdown {
+    ... on StorefrontTipsBreakdownMoneyContainer {
+      money {
+        values {
+          currencyCode
+          nanos
+          units
+        }
+      }
+    }
+    ... on StorefrontTipsBreakdownPercentageContainer {
+      percentage {
+        calculation
+        values
+      }
+    }
+  }
+  defaultBreakdownValueIndex
+  allowCustomTip
+}
+
+fragment StorefrontDeliveryFees on StorefrontDeliveryFees {
+  deliveryFees {
+    distance {
+      amount
+      unit
+    }
+    fee {
+      currencyCode
+      nanos
+      units
+    }
+  }
+}
+
+fragment Distance on Distance {
+  amount
+  unit
+}

@@ -1,0 +1,7 @@
+# route: picnic-gateway
+query PicnicBusinessViewEnabled {
+  picnicBusinessViewEnabled {
+    enabled
+    isSuperAdmin
+  }
+}

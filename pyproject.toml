@@ -1,0 +1,31 @@
+[project]
+name = "picnic-mcp"
+version = "0.1.0"
+description = "Client SDK + MCP server for Picnic (trypicnic.com) office food ordering"
+readme = "README.md"
+authors = [
+    { name = "Philip Kung", email = "philip@sweetspot.so" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastmcp>=4.0.10",
+    "httpx>=0.28.1",
+]
+
+[project.scripts]
+picnic-mcp = "picnic_mcp.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "graphql-core>=3.3.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "respx>=0.23.1",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

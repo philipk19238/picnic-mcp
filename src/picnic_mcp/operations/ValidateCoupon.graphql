@@ -1,0 +1,12 @@
+# route: picnic-gateway
+query ValidateCoupon($input: ValidateCouponInput!) {
+  validateCoupon(input: $input) {
+    discount {
+      currencyCode
+      nanos
+      units
+    }
+    evaluationToken
+    invalidCouponReasonTypes
+  }
+}

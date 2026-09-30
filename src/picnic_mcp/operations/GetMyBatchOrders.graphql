@@ -1,0 +1,155 @@
+# route: picnic-gateway
+query GetMyBatchOrders {
+  myPicnicBatchOrders {
+    id
+    isActive
+    name
+    createdAt
+    deliveryInfo {
+      deliveryWindowEnd
+    }
+    coupon {
+      promotionValue {
+        ...PromotionDiscountValueFields
+      }
+    }
+    summary {
+      eaterOrders {
+        ...PicnicBatchOrderEaterOrderFields
+      }
+      totalRedemption {
+        ...MoneyFields
+      }
+      batchOrderStatus
+    }
+  }
+}
+
+fragment PromotionDiscountValueFields on PromotionDiscountValue {
+  ... on PromotionSubtotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionSubtotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on MenuItemValue {
+    itemPromotionValues {
+      id
+      type
+      discountValue {
+        __typename
+        ... on MenuDiscountValueFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountUpdatedPriceFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountValuePercentage {
+          basisPoints
+        }
+      }
+    }
+  }
+}
+
+fragment MoneyFields on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicBatchOrderEaterOrderFields on PicnicBatchOrderEaterOrder {
+  orderId
+  customerId
+  customerName
+  orderRedemption {
+    ...MoneyFields
+  }
+  orderTotal {
+    ...MoneyFields
+  }
+  childOrders {
+    ...PicnicBatchOrderEaterOrderChildOrderFields
+  }
+  subtotal {
+    ...MoneyFields
+  }
+  tax {
+    ...MoneyFields
+  }
+  orderStatus
+}
+
+fragment PicnicBatchOrderEaterOrderChildOrderFields on PicnicBatchOrderEaterOrderChildOrder {
+  storeId
+  storeName
+  cartItems {
+    ...PicnicCustomerItemFields
+  }
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}

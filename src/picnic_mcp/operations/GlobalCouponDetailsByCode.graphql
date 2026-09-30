@@ -1,0 +1,74 @@
+# route: picnic-gateway
+query GlobalCouponDetailsByCode($input: GetGlobalCouponInput!) {
+  getRestrictedGlobalCouponDetailsByCode(input: $input) {
+    daysOfWeek
+    description
+    code
+    couponType
+    version
+    start
+    end
+    enabled
+    trigger {
+      spend {
+        minimum {
+          units
+          nanos
+          currencyCode
+        }
+      }
+    }
+    promotionValue {
+      __typename
+      ... on PromotionSubtotalValueFlat {
+        value {
+          ...BasicMoney
+        }
+      }
+      ... on PromotionSubtotalValuePercentage {
+        percentage
+        maxValue {
+          ...BasicMoney
+        }
+      }
+      ... on PromotionOrderTotalValueFlat {
+        value {
+          ...BasicMoney
+        }
+      }
+      ... on PromotionOrderTotalValuePercentage {
+        percentage
+        maxValue {
+          ...BasicMoney
+        }
+      }
+      ... on MenuItemValue {
+        itemPromotionValues {
+          id
+          discountValue {
+            __typename
+            ... on MenuDiscountValueFlat {
+              value {
+                ...BasicMoney
+              }
+            }
+            ... on MenuDiscountUpdatedPriceFlat {
+              value {
+                ...BasicMoney
+              }
+            }
+            ... on MenuDiscountValuePercentage {
+              basisPoints
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}

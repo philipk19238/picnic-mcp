@@ -1,0 +1,23 @@
+# route: cloudkitchens
+query PaymentRecordsByIds($input: PaymentRecordsByIdsInput!) {
+  publicPaymentRecordsByIds(input: $input) {
+    paymentRecords {
+      ...PaymentRecordFields
+    }
+  }
+}
+
+fragment PaymentRecordFields on PublicPaymentRecord {
+  id
+  state
+  paymentMethodType
+  internalPaymentMethodId
+  errorDescription
+  errorCode
+  declineCode
+  providerPayload {
+    paymentResponse {
+      paymentProviderPayload
+    }
+  }
+}

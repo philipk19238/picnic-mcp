@@ -1,0 +1,18 @@
+# route: picnic-gateway
+mutation InviteEmailsToPicnicBatchOrder($input: InviteEmailsToPicnicBatchOrderInput!) {
+  inviteEmailsToPicnicBatchOrder(input: $input) {
+    inviteResults {
+      email
+      success {
+        emailInvite {
+          email
+          invitedAt
+        }
+      }
+      error {
+        errorCode
+        message
+      }
+    }
+  }
+}

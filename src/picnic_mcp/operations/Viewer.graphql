@@ -1,0 +1,13 @@
+# route: cloudkitchens
+query Viewer {
+  viewer {
+    id
+    eater {
+      birthday {
+        month
+        day
+      }
+      sendOffersUpdates
+    }
+  }
+}

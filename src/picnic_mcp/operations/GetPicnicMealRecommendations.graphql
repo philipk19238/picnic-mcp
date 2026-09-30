@@ -1,0 +1,106 @@
+# route: picnic-gateway
+query GetPicnicMealRecommendations($input: GetPicnicMealRecommendationsInput!) {
+  getPicnicMealRecommendations(input: $input) {
+    meals {
+      ...RotationMealFields
+    }
+    storeDataMap {
+      key
+      value {
+        ...PicnicStoreDataFields
+      }
+    }
+    suggestedDaysOfWeek
+    popularMeals {
+      ...RotationMealFields
+    }
+  }
+}
+
+fragment RotationMealFields on Meal {
+  mealContentsHash
+  mealItems {
+    ...PicnicCustomerItemFields
+    menuItem {
+      allergens {
+        propertyId
+        boolValue
+      }
+      dietaryRestrictions {
+        propertyId
+        boolValue
+      }
+    }
+  }
+  orderTotal {
+    ...BasicMoney
+  }
+  displayOrderTotal {
+    ...BasicMoney
+  }
+  validationIssues {
+    ...MealValidationIssueEntryFields
+  }
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}
+
+fragment MealValidationIssueEntryFields on MealValidationIssueEntry {
+  issue
+  entityId
+}
+
+fragment PicnicStoreDataFields on PicnicStoreData {
+  storeId
+  facilityId
+  brandName
+  brandSlug
+  locationSlug
+  storeLogoUrl
+  storeImageUrl
+  currencyCode
+}

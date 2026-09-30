@@ -1,0 +1,138 @@
+# route: picnic-gateway
+query PicnicOrderById($input: PicnicOrderByIdInput!) {
+  picnicOrderById(input: $input) {
+    ...PicnicOrderReceiptFields
+  }
+}
+
+fragment PicnicOrderReceiptFields on PicnicOrder {
+  id
+  displayId
+  orderStatus
+  orderPlacedAt
+  foodStarRating
+  isOrderPendingRating
+  isCancellable
+  timezone
+  eater {
+    id
+    name
+    email
+    phone
+  }
+  fulfillmentInfo {
+    delivery {
+      note
+      deliveryHubInfo {
+        name
+        isVirtual
+        address {
+          countryIso
+        }
+        deliveryWindowStart
+        deliveryWindowEnd
+        windowDisplayName
+        eaterPickupInstructions
+        timezone
+      }
+    }
+  }
+  meal {
+    mealContentsHash
+    mealItems {
+      customerItemId
+      storeId
+      note
+      quantity
+      price {
+        ...BasicMoney
+      }
+      name
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+            modifiers {
+              ...PicnicCustomerItemModifierFields
+              modifiers {
+                ...PicnicCustomerItemModifierFields
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  paymentDetails {
+    lineItems {
+      ...PicnicOrderLineItemFields
+    }
+    total {
+      ...BasicMoney
+    }
+  }
+  orderPaymentMethodDetails {
+    paymentMethodDetails {
+      paymentMethodType
+      cardDetails {
+        lastFour
+        cardBrand
+      }
+      walletType
+    }
+    paidAmount {
+      ...BasicMoney
+    }
+    availableBalance {
+      ...BasicMoney
+    }
+  }
+  storeDataMap {
+    key
+    value {
+      storeId
+      brandName
+      storeLogoUrl
+      currencyCode
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}
+
+fragment PicnicOrderLineItemFields on PicnicOrderLineItem {
+  descriptionRosettaKey
+  value {
+    ...MoneyFields
+  }
+  externalName
+  breakdown {
+    descriptionRosettaKey
+    value {
+      ...MoneyFields
+    }
+    externalName
+  }
+}
+
+fragment MoneyFields on Money {
+  currencyCode
+  units
+  nanos
+}

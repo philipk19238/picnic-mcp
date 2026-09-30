@@ -1,0 +1,14 @@
+# route: cloudkitchens
+query PublicFlagshipValues($input: PublicFlagshipValuesInput!) {
+  publicFlagshipValues(input: $input) {
+    values {
+      namespace
+      configName
+      value {
+        ... on BooleanValueWrapper {
+          value
+        }
+      }
+    }
+  }
+}

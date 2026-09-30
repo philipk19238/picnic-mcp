@@ -1,0 +1,43 @@
+# route: picnic-gateway
+query PaymentMethods($input: PaymentMethodsInput!) {
+  paymentMethods(input: $input) {
+    paymentMethods {
+      ...PaymentCentralPaymentMethodFields
+    }
+  }
+}
+
+fragment PaymentCentralPaymentMethodFields on PaymentCentralPaymentMethod {
+  paymentMethodId
+  paymentMethodType
+  externalPaymentMethodId
+  paymentPlatformAccount
+  paymentProviderType
+  businessUnit
+  paymentMethodAlias
+  card {
+    cardBrandType
+    lastFour
+    expiration {
+      year
+      month
+    }
+  }
+  ach {
+    bankName
+    lastFour
+  }
+  acss {
+    lastFour
+    bankName
+  }
+  bacs {
+    lastFour
+  }
+  becs {
+    lastFour
+  }
+  sepa {
+    lastFour
+  }
+}

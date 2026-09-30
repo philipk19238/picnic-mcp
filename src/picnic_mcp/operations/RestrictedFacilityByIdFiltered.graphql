@@ -1,0 +1,74 @@
+# route: cloudkitchens
+query RestrictedFacilityByIdFiltered($facilityId: ID!) {
+  restrictedFacilityById(input: { facilityId: $facilityId }) {
+    id
+    name
+    address {
+      ...BasicAddress
+    }
+    facilityBrandName
+    externalName
+    timezone
+    locale
+    currencyCode
+    websiteUrl
+    isCssFacility
+    facilitySchedule {
+      timezone
+      weeklySchedule {
+        ...WeeklyScheduleFields
+      }
+      overrides {
+        ...ScheduledTimeRangesFields
+      }
+    }
+  }
+}
+
+fragment BasicAddress on Address {
+  addressOne
+  addressTwo
+  latLong {
+    ... on Coordinate {
+      latitude
+      longitude
+    }
+  }
+  countryCode
+}
+
+fragment WeeklyScheduleFields on WeeklySchedule {
+  monday {
+    ...TimeRangeFields
+  }
+  tuesday {
+    ...TimeRangeFields
+  }
+  wednesday {
+    ...TimeRangeFields
+  }
+  thursday {
+    ...TimeRangeFields
+  }
+  friday {
+    ...TimeRangeFields
+  }
+  saturday {
+    ...TimeRangeFields
+  }
+  sunday {
+    ...TimeRangeFields
+  }
+}
+
+fragment TimeRangeFields on TimeRange {
+  start
+  end
+}
+
+fragment ScheduledTimeRangesFields on ScheduledTimeRanges {
+  date
+  timeRanges {
+    ...TimeRangeFields
+  }
+}

@@ -1,0 +1,237 @@
+# route: picnic-gateway
+query GetCalendaringSchedule {
+  getCalendaringSchedule {
+    enrichedSchedule {
+      ...EnrichedCalendaringScheduleFields
+    }
+  }
+}
+
+fragment EnrichedCalendaringScheduleFields on EnrichedCalendaringSchedule {
+  rotationEnabled
+  calendaringScheduleEntries {
+    ...EnrichedCalendaringScheduleEntryFields
+  }
+  storeDataMap {
+    key
+    value {
+      ...PicnicStoreDataFields
+    }
+  }
+  coupons {
+    ...RestrictedCouponDetailsFields
+  }
+}
+
+fragment EnrichedCalendaringScheduleEntryFields on EnrichedCalendaringScheduleEntry {
+  id
+  meal {
+    ...RotationMealFields
+  }
+  deliveryInfo {
+    hubId
+    hubName
+    deliveryWindowDisplayName
+    deliveryWindowStart
+    deliveryWindowEnd
+    minOrderingLeadTime
+    timezone
+    placeOrderAt
+  }
+  storeIds
+  source
+  state {
+    orderId
+    orderConfirmedAt
+    cancelledAt
+    skippedReason
+    orderPlacementFailedReasons {
+      orderId
+      validationIssues {
+        ...PicnicValidationIssueFields
+      }
+    }
+    validationErrors {
+      validationIssues {
+        ...PicnicValidationIssueFields
+      }
+    }
+  }
+  deductions {
+    ...RotationDeductionFields
+  }
+}
+
+fragment RotationMealFields on Meal {
+  mealContentsHash
+  mealItems {
+    ...PicnicCustomerItemFields
+    menuItem {
+      allergens {
+        propertyId
+        boolValue
+      }
+      dietaryRestrictions {
+        propertyId
+        boolValue
+      }
+    }
+  }
+  orderTotal {
+    ...BasicMoney
+  }
+  displayOrderTotal {
+    ...BasicMoney
+  }
+  validationIssues {
+    ...MealValidationIssueEntryFields
+  }
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}
+
+fragment MealValidationIssueEntryFields on MealValidationIssueEntry {
+  issue
+  entityId
+}
+
+fragment PicnicValidationIssueFields on PicnicValidationIssue {
+  issueType
+  entityIds
+  entityType
+  storeId
+}
+
+fragment RotationDeductionFields on Deduction {
+  coupon {
+    couponCode
+  }
+  stipendCoupon {
+    couponCode
+    stipendStatus
+  }
+}
+
+fragment PicnicStoreDataFields on PicnicStoreData {
+  storeId
+  facilityId
+  brandName
+  brandSlug
+  locationSlug
+  storeLogoUrl
+  storeImageUrl
+  currencyCode
+}
+
+fragment RestrictedCouponDetailsFields on RestrictedCouponDetails {
+  description
+  code
+  couponType
+  start
+  startLocalDate
+  end
+  endLocalDate
+  enabled
+  version
+  promotionValue {
+    ...PromotionDiscountValueFields
+  }
+  daysOfWeek
+}
+
+fragment PromotionDiscountValueFields on PromotionDiscountValue {
+  ... on PromotionSubtotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionSubtotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on MenuItemValue {
+    itemPromotionValues {
+      id
+      type
+      discountValue {
+        __typename
+        ... on MenuDiscountValueFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountUpdatedPriceFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountValuePercentage {
+          basisPoints
+        }
+      }
+    }
+  }
+}
+
+fragment MoneyFields on Money {
+  currencyCode
+  units
+  nanos
+}

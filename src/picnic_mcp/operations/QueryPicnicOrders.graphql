@@ -1,0 +1,106 @@
+# route: picnic-gateway
+query QueryPicnicOrders($input: QueryPicnicOrdersInput!) {
+  queryPicnicOrders(input: $input) {
+    edges {
+      node {
+        id
+        displayId
+        orderType
+        orderStatus
+        orderPlacedAt
+        calendaringInfo {
+          source
+        }
+        paymentDetails {
+          total {
+            ...BasicMoney
+          }
+        }
+        meal {
+          eaterReferenceId
+          mealContentsHash
+          mealItems {
+            ...PicnicCustomerItemFields
+            displayPrice {
+              ...BasicMoney
+            }
+          }
+          referenceOrderId
+          note
+          orderTotal {
+            ...BasicMoney
+          }
+          displayOrderTotal {
+            ...BasicMoney
+          }
+        }
+        fulfillmentInfo {
+          delivery {
+            deliveryHubInfo {
+              deliveryWindowStart
+              name
+              windowDisplayName
+              timezone
+            }
+          }
+        }
+        storeDataMap {
+          key
+          value {
+            storeId
+            brandName
+            brandSlug
+            locationSlug
+            storeLogoUrl
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}

@@ -1,0 +1,9 @@
+# route: picnic-gateway
+mutation RateOrder($input: RateOrderInput!) {
+  rateOrder(input: $input) {
+    __typename
+    ... on RateOrderPayload {
+      success
+    }
+  }
+}

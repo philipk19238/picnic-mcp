@@ -1,0 +1,16 @@
+# route: picnic-gateway
+query BatchOrderCreationMetadata($input: BatchOrderCreationMetadataInput!) {
+  batchOrderCreationMetadata(input: $input) {
+    authorizedPaymentAmount {
+      ...MoneyFields
+    }
+    currencyCode
+    enabled
+  }
+}
+
+fragment MoneyFields on Money {
+  currencyCode
+  units
+  nanos
+}

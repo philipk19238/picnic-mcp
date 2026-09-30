@@ -1,0 +1,7 @@
+# route: picnic-gateway
+query GetFrontChatIdentity {
+  frontChatIdentity {
+    userId
+    userHash
+  }
+}

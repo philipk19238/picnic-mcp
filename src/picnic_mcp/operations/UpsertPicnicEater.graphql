@@ -1,0 +1,18 @@
+# route: picnic-gateway
+mutation UpsertPicnicEater($input: UpsertPicnicEaterInput!) {
+  upsertPicnicEater(input: $input) {
+    sendPicnicOffersUpdates
+    sendPicnicOffersUpdatesText
+    acceptedTermsAndConditions
+    showPricesIncludingTax
+    commPreferences {
+      ...CommPreferencesFields
+    }
+  }
+}
+
+fragment CommPreferencesFields on PicnicCommPreference {
+  category
+  channel
+  enabled
+}

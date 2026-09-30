@@ -1,0 +1,54 @@
+# route: cloudkitchens
+query FundingInstructions($input: FundingInstructionsInput!) {
+  fundingInstructions(input: $input) {
+    fundingInstructions {
+      ...FundingInstructionFields
+    }
+  }
+}
+
+fragment FundingInstructionFields on FundingInstruction {
+  countryCode
+  ach {
+    routingNumber
+    accountNumber
+    bankName
+    swiftCode
+  }
+  sortCode {
+    sortCode
+    accountNumber
+    accountHolderName
+  }
+  spei {
+    bankCode
+    bankName
+    clabe
+    paymentInstruction
+  }
+  iban {
+    iban
+    bic
+    countryCode
+    accountHolderName
+  }
+  acss {
+    institutionNumber
+    transitNumber
+    accountNumber
+    bankName
+  }
+  becs {
+    bsbNumber
+    accountNumber
+    swift
+    bankName
+  }
+  css {
+    holderName
+    accountNumber
+    bankName
+    domesticBankCode
+    internationalBankCode
+  }
+}

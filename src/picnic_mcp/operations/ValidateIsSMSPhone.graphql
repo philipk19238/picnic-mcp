@@ -1,0 +1,10 @@
+# route: picnic-gateway
+query ValidateIsSMSPhone($input: ValidateSMSPhoneForProjectInput!) {
+  validateSMSPhoneForProject(input: $input) {
+    ... on ValidateSMSPhoneForProjectResponse {
+      is_valid
+      invalid_reason
+      country_code
+    }
+  }
+}

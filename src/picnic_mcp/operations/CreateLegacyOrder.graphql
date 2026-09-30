@@ -1,0 +1,67 @@
+# route: picnic-gateway
+mutation CreateLegacyOrder($input: CreateLegacyPicnicOrderInput!) {
+  createLegacyOrder(input: $input) {
+    ...CreateLegacyOrderResponseFields
+  }
+}
+
+fragment CreateLegacyOrderResponseFields on CreateEaterOrderV2Response {
+  ... on CreateEaterOrderV2Success {
+    ...BasicCreateLegacyOrderSuccessFields
+  }
+  ... on InvalidGuestEaterOrder {
+    validationIssues {
+      ...PicnicEaterValidationIssuesFields
+    }
+  }
+  ... on CreateEaterOrderV2PaymentError {
+    errorDetails {
+      paymentErrorCode
+      declineCode
+      rawErrorCode
+      rawErrorMessage
+    }
+  }
+  ... on AlreadyExistsEaterOrder {
+    paymentState
+    success {
+      ...BasicCreateLegacyOrderSuccessFields
+    }
+  }
+}
+
+fragment BasicCreateLegacyOrderSuccessFields on CreateEaterOrderV2Success {
+  sessionToken
+  payment {
+    paymentRecord {
+      paymentRecordId
+      namespace
+    }
+    paymentProviderPayload
+    redirectUrl
+  }
+  order {
+    id
+    note
+    externalId
+    displayId
+    paymentDetails {
+      total {
+        ...BasicMoney
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicEaterValidationIssuesFields on EaterValidationIssue {
+  issueType
+  entityIds
+  entityType
+  storeId
+}

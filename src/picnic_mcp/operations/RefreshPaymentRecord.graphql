@@ -1,0 +1,23 @@
+# route: cloudkitchens
+mutation RefreshPaymentRecord($input: RefreshPaymentRecordInput!) {
+  refreshPaymentRecord(input: $input) {
+    publicPaymentRecord {
+      ...PaymentRecordFields
+    }
+  }
+}
+
+fragment PaymentRecordFields on PublicPaymentRecord {
+  id
+  state
+  paymentMethodType
+  internalPaymentMethodId
+  errorDescription
+  errorCode
+  declineCode
+  providerPayload {
+    paymentResponse {
+      paymentProviderPayload
+    }
+  }
+}

@@ -1,0 +1,99 @@
+# route: picnic-gateway
+query SearchDeliveryHubsByFilter($facilityId: String, $searchQuery: String, $includePicnicBiteHubs: Boolean, $serviceSlug: String = "picnic", $allowHiddenHubs: Boolean) {
+  deliveryHubsByFilter(
+    input: {
+      facilityId: $facilityId
+      searchQuery: $searchQuery
+      includePicnicBiteHubs: $includePicnicBiteHubs
+      serviceSlug: $serviceSlug
+      allowHiddenHubs: $allowHiddenHubs
+    }
+  ) {
+    ... on DeliveryHubsByFilterPayload {
+      results {
+        ... on DeliveryHubsByFilterAddressResult {
+          address {
+            ...CanonicalAddressFields
+          }
+          deliveryHubs {
+            ...DeliveryHubsFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment CanonicalAddressFields on CanonicalAddress {
+  countryIso
+  addressLocalized {
+    addressType
+    addressLines
+    addressLocality
+    addressPostalCode
+    addressRegion
+    streetNumber
+    placeName
+  }
+  coordinate {
+    latitude
+    longitude
+  }
+  addressComponent {
+    adminLevel1
+    adminLevel2
+    adminLevel3
+    adminLevel4
+    adminLevel5
+    adminLocality1
+    adminLocality2
+    adminLocality3
+    adminLocality4
+    adminLocality5
+    adminLocality6
+    neighborhood
+    buildingName
+    buildingNumber
+    secondaryAddressUnit
+    country
+    streetNumber
+  }
+}
+
+fragment DeliveryHubsFields on DeliveryHub {
+  id
+  name
+  category
+  eaterPickupInstructions
+  shortCode
+  isHubShared
+  isHidden
+  isVirtual
+  floor
+  organizationName
+  buildingName
+  timezone
+  address {
+    ...CanonicalAddressFields
+  }
+  individualRoutes(selectionMode: ONE_PER_DELIVERY_WINDOW) {
+    ...BasicIndividualDeliveryRoute
+  }
+}
+
+fragment BasicIndividualDeliveryRoute on IndividualDeliveryRoute {
+  routeId
+  hub {
+    id
+  }
+  restrictedFacility {
+    id
+    timezone
+    currencyCode
+  }
+  windowDisplayName
+  deliveryWindowStart
+  deliveryWindowEnd
+  maxOrderingLeadTime
+  minOrderingLeadTime
+}

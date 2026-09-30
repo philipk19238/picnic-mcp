@@ -1,0 +1,6 @@
+# route: picnic-gateway
+mutation CreateSetupIntent($input: CreateSetupIntentInput!) {
+  createSetupIntent(input: $input) {
+    paymentProviderPayload
+  }
+}

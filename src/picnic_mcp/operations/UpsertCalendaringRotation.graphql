@@ -1,0 +1,95 @@
+# route: picnic-gateway
+mutation UpsertCalendaringRotation($input: UpsertCalendaringRotationInput!) {
+  upsertCalendaringRotation(input: $input) {
+    rotation {
+      ...CalendaringRotationFields
+    }
+  }
+}
+
+fragment CalendaringRotationFields on CalendaringRotation {
+  enabled
+  hubId
+  deliveryWindowStart
+  daysOfWeek
+  meals {
+    ...RotationMealFields
+  }
+}
+
+fragment RotationMealFields on Meal {
+  mealContentsHash
+  mealItems {
+    ...PicnicCustomerItemFields
+    menuItem {
+      allergens {
+        propertyId
+        boolValue
+      }
+      dietaryRestrictions {
+        propertyId
+        boolValue
+      }
+    }
+  }
+  orderTotal {
+    ...BasicMoney
+  }
+  displayOrderTotal {
+    ...BasicMoney
+  }
+  validationIssues {
+    ...MealValidationIssueEntryFields
+  }
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}
+
+fragment MealValidationIssueEntryFields on MealValidationIssueEntry {
+  issue
+  entityId
+}

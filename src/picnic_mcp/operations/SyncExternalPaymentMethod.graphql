@@ -1,0 +1,8 @@
+# route: picnic-gateway
+mutation SyncExternalPaymentMethod($input: SyncExternalPaymentMethodInput!) {
+  syncExternalPaymentMethod(input: $input) {
+    syncedPaymentMethod {
+      paymentMethodId
+    }
+  }
+}

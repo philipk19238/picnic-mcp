@@ -1,0 +1,26 @@
+# route: picnic-gateway
+mutation ConfirmPayment($input: ConfirmPaymentInput!) {
+  confirmPayment(input: $input) {
+    paymentRecord {
+      ...ConfirmPaymentRecordFields
+    }
+    errorDetails {
+      rawErrorCode
+      rawErrorMessage
+      authErrorCode
+    }
+  }
+}
+
+fragment ConfirmPaymentRecordFields on PublicPaymentRecord {
+  id
+  state
+  errorCode
+  declineCode
+  errorDescription
+  paymentRecordPaymentMethodDetails {
+    card {
+      fingerprint
+    }
+  }
+}

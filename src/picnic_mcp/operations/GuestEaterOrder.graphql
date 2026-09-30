@@ -1,0 +1,399 @@
+# route: cloudkitchens
+query GuestEaterOrder($input: GuestEaterOrderInput!, $includeStoreDisplayFields: Boolean = false, $includeItemIds: Boolean = false, $serviceSlug: String = "", $includeOrderPaymentMethodDetails: Boolean = false) {
+  guestEaterOrder(input: $input) {
+    ...BasicGuestEaterOrderSuccess
+  }
+}
+
+fragment BasicGuestEaterOrderSuccess on GuestEaterOrderSuccess {
+  order {
+    ...BasicEaterOrder
+    payments {
+      payerName
+      amount {
+        ...BasicMoney
+      }
+      memo
+    }
+    splitPayConfiguration {
+      by {
+        ... on SplitPayByEvenly {
+          evenly {
+            numberOfSplits
+          }
+        }
+      }
+    }
+    paymentMethodDetails {
+      ...BasicPaymentMethodDetails
+    }
+    orderPaymentMethodDetails @include(if: $includeOrderPaymentMethodDetails) {
+      availableBalance {
+        ...BasicMoney
+      }
+      paidAmount {
+        ...BasicMoney
+      }
+      paymentMethodDetails {
+        ...BasicPaymentMethodDetails
+      }
+    }
+    schedulingType
+  }
+}
+
+fragment BasicEaterOrder on EaterOrder {
+  id
+  note
+  externalId
+  displayId
+  handoffBin
+  childOrders {
+    ...BasicChildOrder
+  }
+  customer {
+    id
+    name
+    phone
+    email
+  }
+  customerItems {
+    ...BasicOrderCustomerItem
+  }
+  fulfillmentTimeRange {
+    min
+    max
+  }
+  itemGroupings {
+    items {
+      itemId
+      isModified
+      isRemoved
+      modifiedBy
+      lastModifiedAt
+    }
+    personType
+    createdAt
+  }
+  paymentDetails {
+    ...BasicEaterOrderPaymentDetails
+  }
+  orderCustomerPayment {
+    ...BasicEaterOrderPaymentDetails
+  }
+  payments {
+    payerName
+    amount {
+      ...BasicMoney
+    }
+    memo
+  }
+  splitPayConfiguration {
+    by {
+      ... on SplitPayByEvenly {
+        evenly {
+          numberOfSplits
+        }
+      }
+    }
+  }
+  status
+  eaterOrderFulfillmentInfo {
+    __typename
+    ...BasicEaterOrderRestaurantDeliveryFulfillmentInfo
+    ...BasicEaterPickupFulfillmentInfo
+    ...BasicEaterDineInFulfillmentInfo
+  }
+  createdAt
+  schedulingType
+  posSyncIssues {
+    injectionFailed
+    latestUpdateFailure {
+      lastAttemptedAt
+      retryCount
+    }
+    totalUpdateFailures
+  }
+  cateringInfo {
+    ...BasicEaterCateringInfo
+  }
+  isOrderPendingRating
+  giveReferralCouponCode
+  isCancellable
+  eventTimestamps {
+    event
+    timestamp
+  }
+  purchasedGiftCards {
+    ...BasicPurchasedGiftCard
+  }
+}
+
+fragment BasicChildOrder on EaterOrder {
+  id
+  externalId
+  displayId
+  customerItems {
+    ...BasicOrderCustomerItem
+  }
+  eaterOrderFulfillmentInfo {
+    __typename
+    ...BasicEaterOrderRestaurantDeliveryFulfillmentInfo
+    ...BasicEaterPickupFulfillmentInfo
+    ...BasicEaterDineInFulfillmentInfo
+  }
+  status
+}
+
+fragment BasicOrderCustomerItem on OrderCustomerItem {
+  customerItemId
+  menuItem @include(if: $includeItemIds) {
+    id
+  }
+  isCustomItem
+  price {
+    currencyCode
+    units
+    nanos
+  }
+  quantity
+  name
+  note
+  contents {
+    isAlcoholic
+  }
+  modifiers {
+    ...BasicCustomerItemModifier
+    modifiers {
+      ...BasicCustomerItemModifier
+      modifiers {
+        ...BasicCustomerItemModifier
+        modifiers {
+          ...BasicCustomerItemModifier
+          modifiers {
+            ...BasicCustomerItemModifier
+            modifiers {
+              ...BasicCustomerItemModifier
+            }
+          }
+        }
+      }
+    }
+  }
+  storeId
+  store @include(if: $includeStoreDisplayFields) {
+    ...StoreDisplayFields
+  }
+  source
+}
+
+fragment BasicCustomerItemModifier on CustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  menuItem @include(if: $includeItemIds) {
+    id
+  }
+  name
+  price {
+    currencyCode
+    units
+    nanos
+  }
+  quantity
+}
+
+fragment StoreDisplayFields on RestrictedStore {
+  id
+  restrictedBrand {
+    name
+  }
+  storefront(serviceSlug: $serviceSlug) {
+    files {
+      logoImage {
+        url
+      }
+    }
+  }
+  settings(serviceSlug: $serviceSlug) {
+    brandSlug
+    locationSlug
+  }
+  restrictedFacility {
+    ... on RestrictedFacility {
+      timezone
+      currencyCode
+    }
+  }
+}
+
+fragment BasicEaterOrderRestaurantDeliveryFulfillmentInfo on EaterOrderRestaurantDeliveryFulfillmentInfo {
+  deliveryAddress {
+    ...CanonicalAddressFields
+  }
+  deliveryHubInfo {
+    ...BasicDeliveryHubInfo
+  }
+  deliveryTrackingUrl
+  deliverableAction
+  note
+  courier {
+    name
+    phone
+    email
+    profilePictureUrl
+    vehicle {
+      type
+      licensePlate
+    }
+  }
+  licensePlate
+  deliverableAction
+  deliveryFailureReason
+  deliveryProofImageUrl
+  lastKnownLocation {
+    latitude
+    longitude
+  }
+}
+
+fragment CanonicalAddressFields on CanonicalAddress {
+  countryIso
+  addressLocalized {
+    addressType
+    addressLines
+    addressLocality
+    addressPostalCode
+    addressRegion
+    streetNumber
+    placeName
+  }
+  coordinate {
+    latitude
+    longitude
+  }
+  addressComponent {
+    adminLevel1
+    adminLevel2
+    adminLevel3
+    adminLevel4
+    adminLevel5
+    adminLocality1
+    adminLocality2
+    adminLocality3
+    adminLocality4
+    adminLocality5
+    adminLocality6
+    neighborhood
+    buildingName
+    buildingNumber
+    secondaryAddressUnit
+    country
+    streetNumber
+  }
+}
+
+fragment BasicDeliveryHubInfo on EaterDeliveryHubInfo {
+  hubName
+  deliveryWindowStart
+  deliveryWindowEnd
+  windowDisplayName
+  eaterPickupInstructions
+  shortCode
+  organizationName
+  buildingDetails {
+    name
+    floor
+  }
+  isVirtual
+}
+
+fragment BasicEaterPickupFulfillmentInfo on EaterPickupFulfillmentInfo {
+  pickupType
+}
+
+fragment BasicEaterDineInFulfillmentInfo on EaterDineInFulfillmentInfo {
+  tableNumber
+  openTabStatus
+  tabClosedBy
+}
+
+fragment BasicEaterOrderPaymentDetails on EaterOrderPaymentDetails {
+  paymentState
+  refundState
+  total {
+    ...BasicMoney
+  }
+  prepayment {
+    ...BasicMoney
+  }
+  paymentDue {
+    ...BasicMoney
+  }
+  lineItems {
+    ...EaterOrderLineItemFields
+  }
+  couponDiscount {
+    ...BasicCouponDiscount
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment EaterOrderLineItemFields on EaterOrderLineItem {
+  descriptionRosettaKey
+  value {
+    ...BasicMoney
+  }
+  breakdown {
+    descriptionRosettaKey
+    value {
+      ...BasicMoney
+    }
+    externalName
+  }
+  externalName
+}
+
+fragment BasicCouponDiscount on EaterCouponDiscount {
+  couponCode
+  discount {
+    ...BasicMoney
+  }
+  discountAsPercentOfSubtotal
+}
+
+fragment BasicEaterCateringInfo on CateringInfo {
+  guestCount
+}
+
+fragment BasicPurchasedGiftCard on PurchasedGiftCard {
+  cardSetId
+  customerItemId
+  giftCard {
+    amount {
+      amount
+      balanceType
+      expirationDate
+    }
+    cardHolder {
+      email
+      name
+      phone
+    }
+    cardNumber
+    giftCardProviderSlug
+  }
+}
+
+fragment BasicPaymentMethodDetails on PaymentMethodDetails {
+  paymentMethodType
+  cardDetails {
+    lastFour
+    cardBrand
+  }
+  walletType
+}

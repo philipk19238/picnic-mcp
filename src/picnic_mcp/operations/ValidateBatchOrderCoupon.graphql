@@ -1,0 +1,13 @@
+# route: picnic-gateway
+query ValidateBatchOrderCoupon($input: ValidateBatchOrderCouponInput!) {
+  validateBatchOrderCoupon(input: $input) {
+    success {
+      isEligible
+      message
+    }
+    error {
+      errorCode
+      message
+    }
+  }
+}

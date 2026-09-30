@@ -1,0 +1,330 @@
+# route: picnic-gateway
+query storeContent($storeConstraints: StoreConstraints!, $cartConstraints: CartConstraints, $isDemo: Boolean, $itemIds: [String!], $filters: ItemFilters) {
+  storeContent(
+    input: {
+      storeConstraints: $storeConstraints
+      cartConstraints: $cartConstraints
+      isDemo: $isDemo
+      itemIds: $itemIds
+      filters: $filters
+    }
+  ) {
+    storeId
+    brandName
+    brandSlug
+    locationSlug
+    storeStatus
+    storeLogoUrl
+    tags
+    rating {
+      score
+      count
+    }
+    pricing {
+      priceTag
+    }
+    badges {
+      ... on DqsStoreBadgeRemainingOrdersCapacity {
+        remainingOrdersCapacity
+      }
+      ... on DqsStoreBadgeEarlyCutoffTime {
+        earlyCutoff
+      }
+      ... on DqsStoreBadgeNewStore {
+        storeAge
+      }
+      ... on DqsStoreBadgeBrandLineup {
+        status
+      }
+    }
+    todayHours {
+      startTime
+      endTime
+    }
+    facilityMetadata {
+      ...DqsFacilityMetadata
+    }
+    storefront {
+      ...DqsStorefront
+    }
+    menu {
+      ...DqsMenu
+    }
+    dayOfWeekHours {
+      key
+      value {
+        timeRanges {
+          startTime
+          endTime
+        }
+      }
+    }
+  }
+}
+
+fragment DqsFacilityMetadata on DqsFacilityMetadata {
+  facilityId
+  brandName
+  address
+  countryCode
+  timezone
+  locale
+  msoEnabled
+  topLevelTags
+  mlRankingId
+  msoManagementStoreId
+}
+
+fragment DqsStorefront on DqsStorefront {
+  data {
+    ...DqsStorefrontData
+  }
+  files {
+    ...DqsStorefrontFiles
+  }
+}
+
+fragment DqsStorefrontData on DqsStorefrontData {
+  delivery {
+    ... on DqsDelivery {
+      minBasketSize {
+        ...BasicMoney
+      }
+      maxBasketSize {
+        ...BasicMoney
+      }
+      allowDelivery
+      scheduledOrders {
+        ...DqsScheduledOrders
+      }
+    }
+  }
+  pickup {
+    ... on DqsPickup {
+      minBasketSize {
+        ...BasicMoney
+      }
+      allowPickup
+      scheduledOrders {
+        ...DqsScheduledOrders
+      }
+    }
+  }
+  dineIn {
+    ... on DqsDineIn {
+      openTabs {
+        ... on DqsOpenTabs {
+          allowOpenTabs
+          allowPayFirst
+        }
+      }
+      minBasketSize {
+        ...BasicMoney
+      }
+      allowDineIn
+      isTableNumberRequired
+      splitPay {
+        ... on DqsSplitPay {
+          allowSplitPay
+          minBasketSize {
+            ...BasicMoney
+          }
+          maxPaymentSplits
+        }
+      }
+    }
+  }
+  store {
+    ... on DqsStore {
+      description
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment DqsScheduledOrders on DqsScheduledOrders {
+  allowScheduledOrders
+}
+
+fragment DqsStorefrontFiles on DqsStorefrontFiles {
+  files {
+    ... on DqsStorefrontFile {
+      fileUse
+      fileMetadata {
+        ... on DqsFileMetadata {
+          fileId
+          servingUrl
+          fileName
+          fileType
+        }
+      }
+    }
+  }
+}
+
+fragment DqsMenu on DqsMenu {
+  menuInfos {
+    ...DqsMenuInfo
+  }
+  modifierGroups {
+    key
+    value {
+      ...DqsModifierGroup
+    }
+  }
+  categories {
+    key
+    value {
+      ...DqsCategory
+    }
+  }
+  items {
+    key
+    value {
+      ...DqsItem
+    }
+  }
+}
+
+fragment DqsMenuInfo on DqsMenuInfo {
+  id
+  name
+  hours {
+    startTime
+    endTime
+  }
+  fulfillmentModes
+  categoryIds
+  disableSpecialInstructions
+  localizedNames {
+    ...LocalizedStringFields
+  }
+}
+
+fragment LocalizedStringFields on LocalizedString {
+  locale
+  value
+}
+
+fragment DqsModifierGroup on DqsModifierGroup {
+  id
+  type
+  name
+  selectionData {
+    minimumNumberOfChoices
+    maximumNumberOfChoices
+    maxPerModifierSelectionQuantity
+  }
+  itemIds
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  defaultSelectionData {
+    defaultModifierSelections {
+      ...DefaultModifierSelectionFields
+    }
+  }
+}
+
+fragment DefaultModifierSelectionFields on DqsDefaultModifierSelection {
+  childId
+  selectionQuantity
+}
+
+fragment DqsCategory on DqsCategory {
+  id
+  name
+  description
+  itemIds
+  localizedNames {
+    ...LocalizedStringFields
+  }
+}
+
+fragment DqsItem on DqsItem {
+  id
+  storeId
+  name
+  description
+  enableSpecialInstructions
+  priceData {
+    price {
+      ...BasicMoney
+    }
+    displayPrice {
+      ...BasicMoney
+    }
+    minimumDisplayPrice {
+      ...BasicMoney
+    }
+    priceOverrides {
+      ...DqsPriceOverride
+    }
+  }
+  isSuspended
+  itemStatus
+  modifierGroupIds
+  contents {
+    isAlcoholic
+  }
+  photo {
+    ...DqsPhoto
+  }
+  photos {
+    ...DqsPhoto
+  }
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  localizedDescriptions {
+    ...LocalizedStringFields
+  }
+  servingCount {
+    low
+    high
+  }
+  dietaryRestrictions {
+    propertyId
+    boolValue
+  }
+  allergens {
+    propertyId
+    boolValue
+  }
+}
+
+fragment DqsPriceOverride on DqsPriceOverride {
+  rules {
+    ... on DqsPathRule {
+      entityPath {
+        ...DqsEntityPath
+      }
+    }
+    ... on DqsFulfillmentModeRule {
+      fulfillmentMode
+    }
+    ... on DqsExternalSlugRule {
+      externalSlug
+    }
+  }
+  value {
+    ...BasicMoney
+  }
+}
+
+fragment DqsEntityPath on DqsEntityPath {
+  pathNode {
+    id
+    type
+  }
+}
+
+fragment DqsPhoto on DqsPhoto {
+  photoUrl
+  filename
+}

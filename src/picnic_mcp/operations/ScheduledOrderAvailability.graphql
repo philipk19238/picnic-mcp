@@ -1,0 +1,19 @@
+# route: cloudkitchens
+query ScheduledOrderAvailability($input: ScheduledOrderAvailabilityInput!) {
+  scheduledOrderAvailability(input: $input) {
+    ... on ScheduledOrderAvailabilitySuccess {
+      dailySchedules {
+        ...ScheduledOrderDailySchedule
+      }
+    }
+  }
+}
+
+fragment ScheduledOrderDailySchedule on DailySchedule {
+  date
+  fulfillmentMode
+  availabilities {
+    start
+    end
+  }
+}

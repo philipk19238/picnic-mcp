@@ -1,0 +1,156 @@
+# route: picnic-gateway
+query SearchItemsAndStoresForHub($input: SearchItemsAndStoresForHubInput!) {
+  searchItemsAndStoresForHub(input: $input) {
+    ... on SearchItemsAndStoresForHubResponse {
+      items {
+        ...DqsItem
+      }
+      stores {
+        ...StoreTile
+      }
+      storesMap {
+        key
+        value {
+          ...StoreTile
+        }
+      }
+    }
+  }
+}
+
+fragment DqsItem on DqsItem {
+  id
+  storeId
+  name
+  description
+  enableSpecialInstructions
+  priceData {
+    price {
+      ...BasicMoney
+    }
+    displayPrice {
+      ...BasicMoney
+    }
+    minimumDisplayPrice {
+      ...BasicMoney
+    }
+    priceOverrides {
+      ...DqsPriceOverride
+    }
+  }
+  isSuspended
+  itemStatus
+  modifierGroupIds
+  contents {
+    isAlcoholic
+  }
+  photo {
+    ...DqsPhoto
+  }
+  photos {
+    ...DqsPhoto
+  }
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  localizedDescriptions {
+    ...LocalizedStringFields
+  }
+  servingCount {
+    low
+    high
+  }
+  dietaryRestrictions {
+    propertyId
+    boolValue
+  }
+  allergens {
+    propertyId
+    boolValue
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment DqsPriceOverride on DqsPriceOverride {
+  rules {
+    ... on DqsPathRule {
+      entityPath {
+        ...DqsEntityPath
+      }
+    }
+    ... on DqsFulfillmentModeRule {
+      fulfillmentMode
+    }
+    ... on DqsExternalSlugRule {
+      externalSlug
+    }
+  }
+  value {
+    ...BasicMoney
+  }
+}
+
+fragment DqsEntityPath on DqsEntityPath {
+  pathNode {
+    id
+    type
+  }
+}
+
+fragment DqsPhoto on DqsPhoto {
+  photoUrl
+  filename
+}
+
+fragment LocalizedStringFields on LocalizedString {
+  locale
+  value
+}
+
+fragment StoreTile on StoreTile {
+  storeId
+  facilityId
+  brandName
+  brandSlug
+  locationSlug
+  storeLogoUrl
+  storeImageUrl
+  tags
+  rating {
+    score
+    count
+  }
+  pricing {
+    priceTag
+  }
+  storeStatus
+  currencyCode
+  prepTimeEstimate {
+    duration
+    p25Duration
+    p75Duration
+  }
+  todayHours {
+    startTime
+    endTime
+  }
+  badges {
+    ... on DqsStoreBadgeEarlyCutoffTime {
+      earlyCutoff
+    }
+    ... on DqsStoreBadgeRemainingOrdersCapacity {
+      remainingOrdersCapacity
+    }
+    ... on DqsStoreBadgeNewStore {
+      storeAge
+    }
+    ... on DqsStoreBadgeBrandLineup {
+      status
+    }
+  }
+}

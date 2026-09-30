@@ -1,0 +1,297 @@
+# route: cloudkitchens
+query GetEaterMenuByStoreV2($input: EaterMenuByStoreInputV2!, $afterItemsCursor: String, $afterModifierGroupsCursor: String, $afterCategoriesCursor: String) {
+  eaterMenuByStoreV2(input: $input) {
+    __typename
+    ... on GetEaterMenuDataSuccessV2 {
+      menuData {
+        ... on EaterMenusV2 {
+          menus {
+            ...BasicEaterMenuInfoV2
+          }
+          items(first: 6000, after: $afterItemsCursor) {
+            ... on EaterCustomerItemConnectionV2 {
+              pageInfo {
+                ...PageInfoFields
+              }
+              edges {
+                ... on EaterCustomerItemEdgeV2 {
+                  node {
+                    ...BasicEaterCustomerItemV2
+                  }
+                }
+              }
+            }
+          }
+          modifierGroups(first: 500, after: $afterModifierGroupsCursor) {
+            ... on EaterCustomerModifierGroupConnectionV2 {
+              pageInfo {
+                ...PageInfoFields
+              }
+              edges {
+                ... on EaterCustomerModifierGroupEdgeV2 {
+                  node {
+                    ...BasicEaterModifierGroupV2
+                  }
+                }
+              }
+            }
+          }
+          categories(first: 500, after: $afterCategoriesCursor) {
+            ... on EaterCategoryConnectionV2 {
+              pageInfo {
+                ...PageInfoFields
+              }
+              edges {
+                ... on EaterCategoryEdgeV2 {
+                  node {
+                    ...BasicEaterCategoryV2
+                  }
+                }
+              }
+            }
+          }
+          defaultTaxRate {
+            stringValue
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicEaterMenuInfoV2 on EaterMenuInfoV2 {
+  id
+  fulfillmentModes
+  categoryIds
+  name
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  hours {
+    ... on HoursData {
+      regularHours {
+        ... on RegularHours {
+          daysOfWeek
+          hours {
+            ... on TimeRange {
+              start
+              end
+            }
+          }
+        }
+      }
+      specialHours {
+        ... on SpecialHours {
+          isClosed
+          date
+          hours {
+            ... on TimeRange {
+              start
+              end
+            }
+          }
+        }
+      }
+    }
+  }
+  disableSpecialInstructions
+}
+
+fragment LocalizedStringFields on LocalizedString {
+  locale
+  value
+}
+
+fragment PageInfoFields on PageInfo {
+  endCursor
+  hasNextPage
+}
+
+fragment BasicEaterCustomerItemV2 on EaterCustomerItemV2 {
+  id
+  isSuspended
+  description
+  name
+  contents {
+    isAlcoholic
+  }
+  photo {
+    ... on EaterMenuPhoto {
+      photoUrl
+    }
+  }
+  photos {
+    ... on EaterMenuPhoto {
+      photoUrl
+      filename
+    }
+  }
+  priceData {
+    ...PriceDataFields
+  }
+  skuDetails {
+    ...SkuDetailsFields
+  }
+  modifierGroupIds
+  ...LocalizedEaterCustomerItemV2Fields
+}
+
+fragment PriceDataFields on PriceData {
+  price {
+    currencyCode
+    units
+    nanos
+  }
+  priceOverrides {
+    __typename
+    value {
+      currencyCode
+      units
+      nanos
+    }
+    rules {
+      ... on PathRule {
+        __typename
+        entityPath {
+          pathNodes {
+            id
+            type
+          }
+        }
+      }
+      ... on ExternalSlugRule {
+        __typename
+        externalServiceSlug
+      }
+      ... on FulfillmentModeRule {
+        __typename
+        fulfillmentMode
+      }
+      ... on PricingTierRule {
+        __typename
+        templateId
+        pricingTierId
+      }
+      ... on WholesaleLicenseeTakehomePricingRule {
+        __typename
+        _
+      }
+    }
+  }
+}
+
+fragment SkuDetailsFields on SkuDetails {
+  skuSlug
+  barcodes {
+    value
+    type
+    __typename
+  }
+  skuFactConfigs {
+    ...SkuFactConfigFields
+    __typename
+  }
+  __typename
+}
+
+fragment SkuFactConfigFields on SkuFactConfig {
+  skuFactId
+  values {
+    ...SkuFactValueFields
+  }
+}
+
+fragment SkuFactValueFields on SkuFactValue {
+  propertyId
+  value {
+    __typename
+    ... on StringValueWrapper {
+      stringValue: value
+      __typename
+    }
+    ... on BooleanValueWrapper {
+      booleanValue: value
+      __typename
+    }
+    ... on IntegerValueWrapper {
+      integerValue: value
+      __typename
+    }
+    ... on FloatValueWrapper {
+      floatValue: value
+      __typename
+    }
+    ... on DoubleRange {
+      lowDouble: low
+      highDouble: high
+      __typename
+    }
+    ... on IntegerRange {
+      lowInt: low
+      highInt: high
+      __typename
+    }
+    ... on StringListValueWrapper {
+      stringListValue: value
+      __typename
+    }
+  }
+}
+
+fragment LocalizedEaterCustomerItemV2Fields on EaterCustomerItemV2 {
+  name
+  description
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  localizedDescriptions {
+    ...LocalizedStringFields
+  }
+}
+
+fragment BasicEaterModifierGroupV2 on EaterCustomerModifierGroupV2 {
+  id
+  type
+  name
+  selectionData {
+    ... on SelectionData {
+      maximumNumberOfChoices
+      minimumNumberOfChoices
+      maxPerModifierSelectionQuantity
+      defaultModifierSelectionData {
+        defaultModifierSelections {
+          childId
+          selectionQuantity
+        }
+      }
+    }
+  }
+  itemIds
+  ...LocalizedEaterModifierGroupV2Fields
+}
+
+fragment LocalizedEaterModifierGroupV2Fields on EaterCustomerModifierGroupV2 {
+  name
+  localizedNames {
+    ...LocalizedStringFields
+  }
+}
+
+fragment BasicEaterCategoryV2 on EaterCategoryV2 {
+  id
+  name
+  description
+  itemIds
+  ...LocalizedEaterCategoryV2Fields
+}
+
+fragment LocalizedEaterCategoryV2Fields on EaterCategoryV2 {
+  name
+  description
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  localizedDescriptions {
+    ...LocalizedStringFields
+  }
+}

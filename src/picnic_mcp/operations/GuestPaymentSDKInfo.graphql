@@ -1,0 +1,86 @@
+# route: cloudkitchens
+query GuestPaymentSDKInfo($input: GuestPaymentSDKInfoInput!) {
+  guestPaymentSDKInfo(input: $input) {
+    info {
+      ...PaymentSDKInfoFields
+    }
+  }
+}
+
+fragment PaymentSDKInfoFields on PaymentSDKInfo {
+  savedPaymentMethods {
+    paymentMethods {
+      ...PaymentCentralPaymentMethodFields
+    }
+  }
+  paymentProviderConfig {
+    ...PaymentProviderConfigFields
+  }
+  paymentAccount {
+    paymentAccountId
+  }
+  stripeInfo {
+    publishableKey
+    connectedAccountId
+  }
+  venmoPpcpInfo {
+    clientId
+    merchantId
+  }
+  payPalInfo {
+    clientId
+    merchantId
+  }
+}
+
+fragment PaymentCentralPaymentMethodFields on PaymentCentralPaymentMethod {
+  paymentMethodId
+  paymentMethodType
+  externalPaymentMethodId
+  paymentPlatformAccount
+  paymentProviderType
+  businessUnit
+  paymentMethodAlias
+  card {
+    cardBrandType
+    lastFour
+    expiration {
+      year
+      month
+    }
+  }
+  ach {
+    bankName
+    lastFour
+  }
+  acss {
+    lastFour
+    bankName
+  }
+  bacs {
+    lastFour
+  }
+  becs {
+    lastFour
+  }
+  sepa {
+    lastFour
+  }
+}
+
+fragment PaymentProviderConfigFields on PaymentProviderConfig {
+  paymentProviderType
+  supportedPaymentMethodTypes {
+    ...PaymentMethodConfigFields
+  }
+  currencyCode
+}
+
+fragment PaymentMethodConfigFields on PaymentMethodConfig {
+  type
+  minimumChargeAmount {
+    units
+    nanos
+    currencyCode
+  }
+}

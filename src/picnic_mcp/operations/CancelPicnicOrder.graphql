@@ -1,0 +1,8 @@
+# route: picnic-gateway
+mutation CancelPicnicOrder($input: CancelPicnicOrderInput!) {
+  cancelPicnicOrder(input: $input) {
+    orderId
+    success
+    cancellationFailureReason
+  }
+}

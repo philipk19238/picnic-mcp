@@ -1,0 +1,204 @@
+# route: cloudkitchens
+mutation ValidateGuestEaterOrder($input: ValidateGuestEaterOrderInput!, $storeId: String!, $serviceSlug: String!) {
+  validateGuestEaterOrder(input: $input) {
+    __typename
+    ... on InvalidGuestEaterOrder {
+      validationIssues {
+        ...CartEaterValidationIssue
+      }
+    }
+    ... on ValidateGuestEaterOrderSuccess {
+      cart {
+        ... on EaterCart {
+          id
+          serviceSlug
+          storeId
+          note
+          scheduledAt
+          couponEvaluationToken
+          fulfillmentInfo {
+            ... on EaterRestaurantDeliveryFulfillmentInfo {
+              deliveryTime
+            }
+            ... on EaterPickupFulfillmentInfo {
+              pickupType
+            }
+            ... on EaterDineInFulfillmentInfo {
+              tableNumber
+            }
+          }
+          customerItems {
+            ... on OrderCustomerItem {
+              customerItemId
+              price {
+                ...BasicMoney
+              }
+              quantity
+              name
+              note
+              modifiers {
+                ... on CustomerItemModifier {
+                  modifierGroupId
+                  customerItemId
+                  name
+                  quantity
+                  price {
+                    ...BasicMoney
+                  }
+                }
+              }
+              storeId
+            }
+          }
+          deliveryInfo {
+            note
+            address {
+              ...CanonicalAddressFields
+            }
+          }
+          cateringInfo {
+            ...BasicEaterCateringInfo
+          }
+        }
+      }
+      paymentDetails {
+        ... on EaterOrderPaymentDetails {
+          ...PreOrderPaymentDetails
+        }
+      }
+    }
+  }
+}
+
+fragment CartEaterValidationIssue on EaterValidationIssue {
+  ...BasicEaterValidationIssue
+  storeId
+  entityIds
+  eaterCustomerItemEntities(storeId: $storeId, serviceSlug: $serviceSlug) {
+    ...BasicPromoEaterCustomerItem
+  }
+  eaterCustomerMenuEntities(storeId: $storeId, serviceSlug: $serviceSlug) {
+    ... on MenuItemPromoEaterCustomerItem {
+      ...BasicPromoEaterCustomerItem
+    }
+    ... on MenuItemPromoEaterCustomerCategory {
+      ...BasicPromoEaterCustomerCategory
+    }
+  }
+}
+
+fragment BasicEaterValidationIssue on EaterValidationIssue {
+  issueType
+  entityId
+}
+
+fragment BasicPromoEaterCustomerItem on MenuItemPromoEaterCustomerItem {
+  id
+  name {
+    value
+  }
+  description {
+    value
+  }
+  priceData {
+    price {
+      ...BasicMoney
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment BasicPromoEaterCustomerCategory on MenuItemPromoEaterCustomerCategory {
+  id
+  name {
+    value
+  }
+  description {
+    value
+  }
+}
+
+fragment CanonicalAddressFields on CanonicalAddress {
+  countryIso
+  addressLocalized {
+    addressType
+    addressLines
+    addressLocality
+    addressPostalCode
+    addressRegion
+    streetNumber
+    placeName
+  }
+  coordinate {
+    latitude
+    longitude
+  }
+  addressComponent {
+    adminLevel1
+    adminLevel2
+    adminLevel3
+    adminLevel4
+    adminLevel5
+    adminLocality1
+    adminLocality2
+    adminLocality3
+    adminLocality4
+    adminLocality5
+    adminLocality6
+    neighborhood
+    buildingName
+    buildingNumber
+    secondaryAddressUnit
+    country
+    streetNumber
+  }
+}
+
+fragment BasicEaterCateringInfo on CateringInfo {
+  guestCount
+}
+
+fragment PreOrderPaymentDetails on EaterOrderPaymentDetails {
+  total {
+    ...BasicMoney
+  }
+  lineItems {
+    ...EaterOrderLineItemFields
+  }
+  couponDiscount {
+    ...BasicCouponDiscount
+  }
+  depositRequired {
+    amount {
+      ...BasicMoney
+    }
+  }
+}
+
+fragment EaterOrderLineItemFields on EaterOrderLineItem {
+  descriptionRosettaKey
+  value {
+    ...BasicMoney
+  }
+  breakdown {
+    descriptionRosettaKey
+    value {
+      ...BasicMoney
+    }
+    externalName
+  }
+  externalName
+}
+
+fragment BasicCouponDiscount on EaterCouponDiscount {
+  couponCode
+  discount {
+    ...BasicMoney
+  }
+  discountAsPercentOfSubtotal
+}

@@ -1,0 +1,17 @@
+# route: cloudkitchens
+query AutoPayConfigurationsForOrganization($input: AutoPayConfigurationsForOrganizationInput!) {
+  autoPayConfigurationsForOrganization(input: $input) {
+    orgConfigs {
+      ...AutoPayConfigurationFields
+    }
+  }
+}
+
+fragment AutoPayConfigurationFields on AutoPayConfigurationV2 {
+  enableAutoPay
+  updatedAt
+  billingNamespace
+  createdAt
+  paymentMethodId
+  organizationId
+}

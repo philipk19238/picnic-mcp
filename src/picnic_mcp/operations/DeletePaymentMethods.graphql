@@ -1,0 +1,6 @@
+# route: cloudkitchens
+mutation DeletePaymentMethods($input: DeletePaymentMethodsInput!) {
+  deletePaymentMethods(input: $input) {
+    _
+  }
+}

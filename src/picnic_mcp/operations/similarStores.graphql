@@ -1,0 +1,67 @@
+# route: picnic-gateway
+query similarStores($input: SimilarStoresInput!) {
+  similarStores(input: $input) {
+    similarByMenu {
+      ...DqsStoreCollection
+    }
+    similarByOrders {
+      ...DqsStoreCollection
+    }
+    stores {
+      key
+      value {
+        ...StoreTile
+      }
+    }
+  }
+}
+
+fragment DqsStoreCollection on DqsStoreCollection {
+  storeCollectionType
+  storeTileContentIds
+  nameOverride
+  subtitle
+}
+
+fragment StoreTile on StoreTile {
+  storeId
+  facilityId
+  brandName
+  brandSlug
+  locationSlug
+  storeLogoUrl
+  storeImageUrl
+  tags
+  rating {
+    score
+    count
+  }
+  pricing {
+    priceTag
+  }
+  storeStatus
+  currencyCode
+  prepTimeEstimate {
+    duration
+    p25Duration
+    p75Duration
+  }
+  todayHours {
+    startTime
+    endTime
+  }
+  badges {
+    ... on DqsStoreBadgeEarlyCutoffTime {
+      earlyCutoff
+    }
+    ... on DqsStoreBadgeRemainingOrdersCapacity {
+      remainingOrdersCapacity
+    }
+    ... on DqsStoreBadgeNewStore {
+      storeAge
+    }
+    ... on DqsStoreBadgeBrandLineup {
+      status
+    }
+  }
+}

@@ -1,0 +1,208 @@
+# route: picnic-gateway
+query ListMyGlobalCoupons($input: ListMyGlobalCouponsInput!) {
+  listMyGlobalCoupons(input: $input) {
+    pageInfo {
+      ... on PageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+    edges {
+      node {
+        details {
+          ...CouponDetailsFields
+        }
+        summary {
+          ...CouponSummaryFields
+        }
+        updatedBy
+        updatedByDetails {
+          id
+          name
+        }
+        numCapturedUserRedemptions
+      }
+    }
+  }
+}
+
+fragment CouponDetailsFields on CouponDetails {
+  budget {
+    ...BasicMoney
+  }
+  code
+  couponType
+  createdAt
+  daysOfWeek
+  description
+  eaterLimitCadence
+  enabled
+  end
+  endLocalDate
+  enforceDurationBasedOnScheduledTime
+  funderPaymentMethodId
+  hubIds
+  hubsOrdersOnly
+  disallowMultipleDailyUses
+  hubs {
+    id
+    name
+    shortCode
+    floor
+    buildingName
+    address {
+      ...CanonicalAddressFields
+    }
+  }
+  maxRedemptions
+  maxRedemptionsPerEater
+  name
+  periodValueLimits {
+    limit {
+      ...BasicMoney
+    }
+    cadence
+  }
+  daysOfWeekTimeRanges {
+    daysOfWeek
+    timeRanges {
+      start
+      end
+    }
+    hubIds
+  }
+  promotionValue {
+    __typename
+    ... on PromotionSubtotalValueFlat {
+      value {
+        ...BasicMoney
+      }
+      taxCoverage {
+        ...PromotionSubtotalValueTaxCoverage
+      }
+    }
+    ... on PromotionSubtotalValuePercentage {
+      percentage
+      maxValue {
+        ...BasicMoney
+      }
+      taxCoverage {
+        ...PromotionSubtotalValueTaxCoverage
+      }
+    }
+    ... on PromotionOrderTotalValueFlat {
+      value {
+        ...BasicMoney
+      }
+    }
+    ... on PromotionOrderTotalValuePercentage {
+      percentage
+      maxValue {
+        ...BasicMoney
+      }
+    }
+    ... on MenuItemValue {
+      itemPromotionValues {
+        id
+        type
+        discountValue {
+          __typename
+          ... on MenuDiscountValueFlat {
+            value {
+              ...BasicMoney
+            }
+          }
+          ... on MenuDiscountUpdatedPriceFlat {
+            value {
+              ...BasicMoney
+            }
+          }
+          ... on MenuDiscountValuePercentage {
+            basisPoints
+          }
+        }
+      }
+    }
+  }
+  requiresSignIn
+  restrictToEmails
+  start
+  startLocalDate
+  stores {
+    id
+  }
+  trigger {
+    spend {
+      minimum {
+        ...BasicMoney
+      }
+    }
+    orderHistory {
+      maxPreviousHubOrders
+    }
+  }
+  version
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment CanonicalAddressFields on CanonicalAddress {
+  countryIso
+  addressLocalized {
+    addressType
+    addressLines
+    addressLocality
+    addressPostalCode
+    addressRegion
+    streetNumber
+    placeName
+  }
+  coordinate {
+    latitude
+    longitude
+  }
+  addressComponent {
+    adminLevel1
+    adminLevel2
+    adminLevel3
+    adminLevel4
+    adminLevel5
+    adminLocality1
+    adminLocality2
+    adminLocality3
+    adminLocality4
+    adminLocality5
+    adminLocality6
+    neighborhood
+    buildingName
+    buildingNumber
+    secondaryAddressUnit
+    country
+    streetNumber
+  }
+}
+
+fragment PromotionSubtotalValueTaxCoverage on PromotionSubtotalValueTaxCoverage {
+  percentage
+  mode
+}
+
+fragment CouponSummaryFields on CouponSummary {
+  numRedemptions
+  averageDiscountedOrderValue {
+    ...BasicMoney
+  }
+  grossDiscountedOrderValue {
+    ...BasicMoney
+  }
+  averageDiscountPerOrder {
+    ...BasicMoney
+  }
+  grossDiscountValue {
+    ...BasicMoney
+  }
+}

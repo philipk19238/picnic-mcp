@@ -1,0 +1,12 @@
+# route: picnic-gateway
+mutation CancelPicnicBatchOrder($input: CancelPicnicBatchOrderInput!) {
+  cancelPicnicBatchOrder(input: $input) {
+    success {
+      id
+    }
+    error {
+      errorCode
+      message
+    }
+  }
+}

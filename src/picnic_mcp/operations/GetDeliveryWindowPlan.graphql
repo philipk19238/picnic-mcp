@@ -1,0 +1,306 @@
+# route: picnic-gateway
+query GetDeliveryWindowPlan($input: DeliveryWindowPlanInput!) {
+  getDeliveryWindowPlan(input: $input) {
+    ...DeliveryWindowPlanResponseFields
+  }
+}
+
+fragment DeliveryWindowPlanResponseFields on DeliveryWindowPlanResponse {
+  windows {
+    deliveryWindowStart
+    deliveryWindowEnd
+    windowDisplayName
+    itemAvailability {
+      itemId
+      status
+    }
+    picnicOrders {
+      ...PicnicOrderFields
+    }
+    stipends {
+      ...StipendFields
+    }
+    remainingPaymentAmount {
+      ...BasicMoney
+    }
+    validationIssues {
+      ...PicnicValidationIssueFields
+    }
+  }
+  isEligibleForScheduledOrders
+  ineligibilityReason
+  stipendCoupons {
+    ...RestrictedCouponDetailsFields
+  }
+}
+
+fragment PicnicOrderFields on PicnicOrder {
+  id
+  displayId
+  serviceSlug
+  eater {
+    ...PicnicOrderEaterFields
+  }
+  fulfillmentInfo {
+    ...PicnicFulfillmentInfoFields
+  }
+  meal {
+    ...MealFields
+  }
+  orderType
+  paymentDetails {
+    lineItems {
+      ...PicnicOrderLineItemFields
+    }
+    total {
+      ...MoneyFields
+    }
+  }
+  stipend {
+    ...RestrictedStipendFields
+  }
+  orderStatus
+  orderTotalBeforeDiscount {
+    ...MoneyFields
+  }
+  stipendDiscount {
+    ...MoneyFields
+  }
+  timezone
+  orderPlacedAt
+  storeDataMap {
+    key
+    value {
+      ...PicnicStoreDataFields
+    }
+  }
+  isCancellable
+  replacementOrderId
+  replacementOfOrderId
+}
+
+fragment PicnicOrderEaterFields on PicnicOrderEater {
+  id
+  name
+  email
+}
+
+fragment PicnicFulfillmentInfoFields on PicnicFulfillmentInfo {
+  delivery {
+    ...PicnicDeliveryFulfillmentInfoFields
+  }
+}
+
+fragment PicnicDeliveryFulfillmentInfoFields on PicnicDeliveryFulfillmentInfo {
+  deliveryHubInfo {
+    ...PicnicOrderHubInfoFields
+  }
+}
+
+fragment PicnicOrderHubInfoFields on PicnicOrderHubInfo {
+  name
+  organizationName
+  deliveryWindowStart
+  deliveryWindowEnd
+  windowDisplayName
+  isVirtual
+  timezone
+}
+
+fragment MealFields on Meal {
+  eaterReferenceId
+  mealContentsHash
+  mealItems {
+    ...PicnicCustomerItemFields
+  }
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}
+
+fragment PicnicOrderLineItemFields on PicnicOrderLineItem {
+  descriptionRosettaKey
+  value {
+    ...MoneyFields
+  }
+  externalName
+  breakdown {
+    descriptionRosettaKey
+    value {
+      ...MoneyFields
+    }
+    externalName
+  }
+}
+
+fragment MoneyFields on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment RestrictedStipendFields on RestrictedStipend {
+  id
+  organization {
+    ...RestrictedEaterOrganizationFields
+  }
+  coupon {
+    ...RestrictedCouponDetailsFields
+  }
+}
+
+fragment RestrictedEaterOrganizationFields on RestrictedEaterOrganization {
+  id
+  organizationName
+}
+
+fragment RestrictedCouponDetailsFields on RestrictedCouponDetails {
+  description
+  code
+  couponType
+  start
+  startLocalDate
+  end
+  endLocalDate
+  enabled
+  version
+  promotionValue {
+    ...PromotionDiscountValueFields
+  }
+  daysOfWeek
+}
+
+fragment PromotionDiscountValueFields on PromotionDiscountValue {
+  ... on PromotionSubtotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionSubtotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on MenuItemValue {
+    itemPromotionValues {
+      id
+      type
+      discountValue {
+        __typename
+        ... on MenuDiscountValueFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountUpdatedPriceFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountValuePercentage {
+          basisPoints
+        }
+      }
+    }
+  }
+}
+
+fragment PicnicStoreDataFields on PicnicStoreData {
+  storeId
+  facilityId
+  brandName
+  brandSlug
+  locationSlug
+  storeLogoUrl
+  storeImageUrl
+  currencyCode
+}
+
+fragment StipendFields on Stipend {
+  stipendStatus
+  stipendCouponCode
+  stipendAllowlistAccessDates {
+    accessStartDate
+    accessEndDate
+  }
+  stipendCouponRemainingLimits {
+    periodValueLimits {
+      cadence
+      limit {
+        ...BasicMoney
+      }
+    }
+    effectiveValueLimit {
+      ...BasicMoney
+    }
+    remainingRedemptions
+    redemptionLimitCadence
+    periodResetTimes {
+      cadence
+      timestamp
+    }
+    effectiveResetTime
+  }
+}
+
+fragment PicnicValidationIssueFields on PicnicValidationIssue {
+  issueType
+  entityIds
+  entityType
+  storeId
+}

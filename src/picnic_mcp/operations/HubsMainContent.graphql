@@ -1,0 +1,363 @@
+# route: picnic-gateway
+query HubsMainContent($hubsMainContentInput: HubsMainContentInput!) {
+  hubsMainContent(input: $hubsMainContentInput) {
+    hubsMetadata {
+      ...HubsMetadata
+    }
+    taggedLayout {
+      ...TaggedLayout
+    }
+  }
+}
+
+fragment HubsMetadata on HubsMetadata {
+  hubsId
+  countryCode
+  timezone
+  locale
+  mlRankingId
+  hubsFacilityMetadata {
+    facilityId
+    msoEnabled
+    msoManagementStoreId
+  }
+}
+
+fragment TaggedLayout on TaggedLayout {
+  collectionsByTag {
+    ...CollectionsByTag
+  }
+  storeTiles {
+    key
+    value {
+      ...StoreTile
+    }
+  }
+  itemTiles {
+    key
+    value {
+      ...ItemTile
+    }
+  }
+  menus {
+    key
+    value {
+      ...DqsMenu
+    }
+  }
+  orderHistory {
+    key
+    value {
+      ...DqsOrderHistory
+    }
+  }
+}
+
+fragment CollectionsByTag on CollectionsByTag {
+  tag
+  entityCollection {
+    ... on DqsStoreCollection {
+      ...DqsStoreCollection
+    }
+    ... on DqsItemCollection {
+      ...DqsItemCollection
+    }
+    ... on DqsOrderCollection {
+      ...DqsOrderCollection
+    }
+  }
+}
+
+fragment DqsStoreCollection on DqsStoreCollection {
+  storeCollectionType
+  storeTileContentIds
+  nameOverride
+  subtitle
+}
+
+fragment DqsItemCollection on DqsItemCollection {
+  itemCollectionType
+  itemTileContentIds
+  nameOverride
+  subtitle
+}
+
+fragment DqsOrderCollection on DqsOrderCollection {
+  orderCollectionType
+  orderTileContentIds
+  nameOverride
+}
+
+fragment StoreTile on StoreTile {
+  storeId
+  facilityId
+  brandName
+  brandSlug
+  locationSlug
+  storeLogoUrl
+  storeImageUrl
+  tags
+  rating {
+    score
+    count
+  }
+  pricing {
+    priceTag
+  }
+  storeStatus
+  currencyCode
+  prepTimeEstimate {
+    duration
+    p25Duration
+    p75Duration
+  }
+  todayHours {
+    startTime
+    endTime
+  }
+  badges {
+    ... on DqsStoreBadgeEarlyCutoffTime {
+      earlyCutoff
+    }
+    ... on DqsStoreBadgeRemainingOrdersCapacity {
+      remainingOrdersCapacity
+    }
+    ... on DqsStoreBadgeNewStore {
+      storeAge
+    }
+    ... on DqsStoreBadgeBrandLineup {
+      status
+    }
+  }
+}
+
+fragment ItemTile on ItemTile {
+  itemId
+  storeId
+}
+
+fragment DqsMenu on DqsMenu {
+  menuInfos {
+    ...DqsMenuInfo
+  }
+  modifierGroups {
+    key
+    value {
+      ...DqsModifierGroup
+    }
+  }
+  categories {
+    key
+    value {
+      ...DqsCategory
+    }
+  }
+  items {
+    key
+    value {
+      ...DqsItem
+    }
+  }
+}
+
+fragment DqsMenuInfo on DqsMenuInfo {
+  id
+  name
+  hours {
+    startTime
+    endTime
+  }
+  fulfillmentModes
+  categoryIds
+  disableSpecialInstructions
+  localizedNames {
+    ...LocalizedStringFields
+  }
+}
+
+fragment LocalizedStringFields on LocalizedString {
+  locale
+  value
+}
+
+fragment DqsModifierGroup on DqsModifierGroup {
+  id
+  type
+  name
+  selectionData {
+    minimumNumberOfChoices
+    maximumNumberOfChoices
+    maxPerModifierSelectionQuantity
+  }
+  itemIds
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  defaultSelectionData {
+    defaultModifierSelections {
+      ...DefaultModifierSelectionFields
+    }
+  }
+}
+
+fragment DefaultModifierSelectionFields on DqsDefaultModifierSelection {
+  childId
+  selectionQuantity
+}
+
+fragment DqsCategory on DqsCategory {
+  id
+  name
+  description
+  itemIds
+  localizedNames {
+    ...LocalizedStringFields
+  }
+}
+
+fragment DqsItem on DqsItem {
+  id
+  storeId
+  name
+  description
+  enableSpecialInstructions
+  priceData {
+    price {
+      ...BasicMoney
+    }
+    displayPrice {
+      ...BasicMoney
+    }
+    minimumDisplayPrice {
+      ...BasicMoney
+    }
+    priceOverrides {
+      ...DqsPriceOverride
+    }
+  }
+  isSuspended
+  itemStatus
+  modifierGroupIds
+  contents {
+    isAlcoholic
+  }
+  photo {
+    ...DqsPhoto
+  }
+  photos {
+    ...DqsPhoto
+  }
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  localizedDescriptions {
+    ...LocalizedStringFields
+  }
+  servingCount {
+    low
+    high
+  }
+  dietaryRestrictions {
+    propertyId
+    boolValue
+  }
+  allergens {
+    propertyId
+    boolValue
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment DqsPriceOverride on DqsPriceOverride {
+  rules {
+    ... on DqsPathRule {
+      entityPath {
+        ...DqsEntityPath
+      }
+    }
+    ... on DqsFulfillmentModeRule {
+      fulfillmentMode
+    }
+    ... on DqsExternalSlugRule {
+      externalSlug
+    }
+  }
+  value {
+    ...BasicMoney
+  }
+}
+
+fragment DqsEntityPath on DqsEntityPath {
+  pathNode {
+    id
+    type
+  }
+}
+
+fragment DqsPhoto on DqsPhoto {
+  photoUrl
+  filename
+}
+
+fragment DqsOrderHistory on OrderHistory {
+  orderId
+  orderTotal {
+    ...BasicMoney
+  }
+  displayOrderTotal {
+    ...BasicMoney
+  }
+  orderPlacementTime
+  orderItems {
+    ...DqsOrderItemFields
+  }
+  mealContentsHash
+}
+
+fragment DqsOrderItemFields on DqsOrderItem {
+  storeId
+  customerItemId
+  name
+  photoUrl
+  quantity
+  note
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  modifiers {
+    ...DqsOrderItemModifier
+    modifiers {
+      ...DqsOrderItemModifier
+      modifiers {
+        ...DqsOrderItemModifier
+        modifiers {
+          ...DqsOrderItemModifier
+          modifiers {
+            ...DqsOrderItemModifier
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment DqsOrderItemModifier on DqsOrderItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  quantity
+}

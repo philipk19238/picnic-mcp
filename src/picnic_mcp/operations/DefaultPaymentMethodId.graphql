@@ -1,0 +1,8 @@
+# route: cloudkitchens
+query DefaultPaymentMethodId {
+  viewer {
+    eater {
+      defaultPaymentMethodId
+    }
+  }
+}

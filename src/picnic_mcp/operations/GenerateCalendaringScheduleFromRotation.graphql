@@ -1,0 +1,104 @@
+# route: picnic-gateway
+mutation GenerateCalendaringScheduleFromRotation($input: GenerateCalendaringScheduleFromRotationInput!) {
+  generateCalendaringScheduleFromRotation(input: $input) {
+    schedule {
+      ...CalendaringScheduleFields
+    }
+  }
+}
+
+fragment CalendaringScheduleFields on CalendaringSchedule {
+  eaterReferenceId
+  calendaringScheduleEntries {
+    ...CalendaringScheduleEntryFields
+  }
+}
+
+fragment CalendaringScheduleEntryFields on CalendaringScheduleEntry {
+  id
+  meal {
+    ...RotationMealFields
+  }
+  deliveryInfo {
+    hubId
+    deliveryWindowStart
+  }
+  source
+}
+
+fragment RotationMealFields on Meal {
+  mealContentsHash
+  mealItems {
+    ...PicnicCustomerItemFields
+    menuItem {
+      allergens {
+        propertyId
+        boolValue
+      }
+      dietaryRestrictions {
+        propertyId
+        boolValue
+      }
+    }
+  }
+  orderTotal {
+    ...BasicMoney
+  }
+  displayOrderTotal {
+    ...BasicMoney
+  }
+  validationIssues {
+    ...MealValidationIssueEntryFields
+  }
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}
+
+fragment MealValidationIssueEntryFields on MealValidationIssueEntry {
+  issue
+  entityId
+}

@@ -1,0 +1,306 @@
+# route: picnic-gateway
+mutation CreatePicnicBatchOrder($input: CreatePicnicBatchOrderInput!) {
+  createPicnicBatchOrder(input: $input) {
+    success {
+      batchOrder {
+        ...PicnicBatchOrderFields
+      }
+    }
+    error {
+      errorCode
+      message
+    }
+  }
+}
+
+fragment PicnicBatchOrderFields on PicnicBatchOrder {
+  id
+  isActive
+  name
+  funderPaymentMethodId
+  orderBy
+  createdAt
+  deliveryInfo {
+    ...PicnicBatchOrderDeliveryInfoFields
+  }
+  coupon {
+    ...RestrictedCouponDetailsFields
+  }
+  freeDeliveryThreshold {
+    ...MoneyFields
+  }
+  deliveryFee {
+    ...MoneyFields
+  }
+  summary {
+    ...PicnicBatchOrderSummaryFields
+  }
+  emailInvites {
+    ...PicnicBatchOrderEmailInviteFields
+  }
+  contactInfo {
+    ...PicnicBatchOrderContactInfoFields
+  }
+}
+
+fragment PicnicBatchOrderDeliveryInfoFields on PicnicBatchOrderDeliveryInfo {
+  hub {
+    ...DeliveryHubsFields
+  }
+  notes
+  deliveryWindowStart
+  deliveryWindowEnd
+}
+
+fragment DeliveryHubsFields on DeliveryHub {
+  id
+  name
+  category
+  eaterPickupInstructions
+  shortCode
+  isHubShared
+  isHidden
+  isVirtual
+  floor
+  organizationName
+  buildingName
+  timezone
+  address {
+    ...CanonicalAddressFields
+  }
+  individualRoutes(selectionMode: ONE_PER_DELIVERY_WINDOW) {
+    ...BasicIndividualDeliveryRoute
+  }
+}
+
+fragment CanonicalAddressFields on CanonicalAddress {
+  countryIso
+  addressLocalized {
+    addressType
+    addressLines
+    addressLocality
+    addressPostalCode
+    addressRegion
+    streetNumber
+    placeName
+  }
+  coordinate {
+    latitude
+    longitude
+  }
+  addressComponent {
+    adminLevel1
+    adminLevel2
+    adminLevel3
+    adminLevel4
+    adminLevel5
+    adminLocality1
+    adminLocality2
+    adminLocality3
+    adminLocality4
+    adminLocality5
+    adminLocality6
+    neighborhood
+    buildingName
+    buildingNumber
+    secondaryAddressUnit
+    country
+    streetNumber
+  }
+}
+
+fragment BasicIndividualDeliveryRoute on IndividualDeliveryRoute {
+  routeId
+  hub {
+    id
+  }
+  restrictedFacility {
+    id
+    timezone
+    currencyCode
+  }
+  windowDisplayName
+  deliveryWindowStart
+  deliveryWindowEnd
+  maxOrderingLeadTime
+  minOrderingLeadTime
+}
+
+fragment RestrictedCouponDetailsFields on RestrictedCouponDetails {
+  description
+  code
+  couponType
+  start
+  startLocalDate
+  end
+  endLocalDate
+  enabled
+  version
+  promotionValue {
+    ...PromotionDiscountValueFields
+  }
+  daysOfWeek
+}
+
+fragment PromotionDiscountValueFields on PromotionDiscountValue {
+  ... on PromotionSubtotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionSubtotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on MenuItemValue {
+    itemPromotionValues {
+      id
+      type
+      discountValue {
+        __typename
+        ... on MenuDiscountValueFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountUpdatedPriceFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountValuePercentage {
+          basisPoints
+        }
+      }
+    }
+  }
+}
+
+fragment MoneyFields on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicBatchOrderSummaryFields on PicnicBatchOrderSummary {
+  eaterOrders {
+    ...PicnicBatchOrderEaterOrderFields
+  }
+  totalRedemption {
+    ...MoneyFields
+  }
+  deliveryFeeDue {
+    ...MoneyFields
+  }
+  totalDue {
+    ...MoneyFields
+  }
+  batchOrderTotal {
+    ...MoneyFields
+  }
+  totalDiscount {
+    ...MoneyFields
+  }
+  maxDiscount {
+    ...MoneyFields
+  }
+  batchOrderStatus
+}
+
+fragment PicnicBatchOrderEaterOrderFields on PicnicBatchOrderEaterOrder {
+  orderId
+  customerId
+  customerName
+  orderRedemption {
+    ...MoneyFields
+  }
+  orderTotal {
+    ...MoneyFields
+  }
+  childOrders {
+    ...PicnicBatchOrderEaterOrderChildOrderFields
+  }
+  subtotal {
+    ...MoneyFields
+  }
+  tax {
+    ...MoneyFields
+  }
+  orderStatus
+}
+
+fragment PicnicBatchOrderEaterOrderChildOrderFields on PicnicBatchOrderEaterOrderChildOrder {
+  storeId
+  storeName
+  cartItems {
+    ...PicnicCustomerItemFields
+  }
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}
+
+fragment PicnicBatchOrderEmailInviteFields on PicnicBatchOrderEmailInvite {
+  email
+}
+
+fragment PicnicBatchOrderContactInfoFields on PicnicBatchOrderContactInfo {
+  name
+  phone
+}

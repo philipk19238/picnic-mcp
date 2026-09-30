@@ -1,0 +1,184 @@
+# route: picnic-gateway
+query RestrictedPicnicBatchOrderById($input: RestrictedPicnicBatchOrderByIdInput!) {
+  restrictedPicnicBatchOrderById(input: $input) {
+    ...RestrictedPicnicBatchOrderFields
+  }
+}
+
+fragment RestrictedPicnicBatchOrderFields on RestrictedPicnicBatchOrder {
+  id
+  isActive
+  name
+  orderBy
+  createdAt
+  deliveryInfo {
+    ...PicnicBatchOrderDeliveryInfoFields
+  }
+  coupon {
+    ...RestrictedCouponDetailsFields
+  }
+  freeDeliveryThreshold {
+    ...MoneyFields
+  }
+  deliveryFee {
+    ...MoneyFields
+  }
+}
+
+fragment PicnicBatchOrderDeliveryInfoFields on PicnicBatchOrderDeliveryInfo {
+  hub {
+    ...DeliveryHubsFields
+  }
+  notes
+  deliveryWindowStart
+  deliveryWindowEnd
+}
+
+fragment DeliveryHubsFields on DeliveryHub {
+  id
+  name
+  category
+  eaterPickupInstructions
+  shortCode
+  isHubShared
+  isHidden
+  isVirtual
+  floor
+  organizationName
+  buildingName
+  timezone
+  address {
+    ...CanonicalAddressFields
+  }
+  individualRoutes(selectionMode: ONE_PER_DELIVERY_WINDOW) {
+    ...BasicIndividualDeliveryRoute
+  }
+}
+
+fragment CanonicalAddressFields on CanonicalAddress {
+  countryIso
+  addressLocalized {
+    addressType
+    addressLines
+    addressLocality
+    addressPostalCode
+    addressRegion
+    streetNumber
+    placeName
+  }
+  coordinate {
+    latitude
+    longitude
+  }
+  addressComponent {
+    adminLevel1
+    adminLevel2
+    adminLevel3
+    adminLevel4
+    adminLevel5
+    adminLocality1
+    adminLocality2
+    adminLocality3
+    adminLocality4
+    adminLocality5
+    adminLocality6
+    neighborhood
+    buildingName
+    buildingNumber
+    secondaryAddressUnit
+    country
+    streetNumber
+  }
+}
+
+fragment BasicIndividualDeliveryRoute on IndividualDeliveryRoute {
+  routeId
+  hub {
+    id
+  }
+  restrictedFacility {
+    id
+    timezone
+    currencyCode
+  }
+  windowDisplayName
+  deliveryWindowStart
+  deliveryWindowEnd
+  maxOrderingLeadTime
+  minOrderingLeadTime
+}
+
+fragment RestrictedCouponDetailsFields on RestrictedCouponDetails {
+  description
+  code
+  couponType
+  start
+  startLocalDate
+  end
+  endLocalDate
+  enabled
+  version
+  promotionValue {
+    ...PromotionDiscountValueFields
+  }
+  daysOfWeek
+}
+
+fragment PromotionDiscountValueFields on PromotionDiscountValue {
+  ... on PromotionSubtotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionSubtotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on MenuItemValue {
+    itemPromotionValues {
+      id
+      type
+      discountValue {
+        __typename
+        ... on MenuDiscountValueFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountUpdatedPriceFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountValuePercentage {
+          basisPoints
+        }
+      }
+    }
+  }
+}
+
+fragment MoneyFields on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}

@@ -1,0 +1,11 @@
+# route: picnic-gateway
+query DemoHub($input: DemoHubInput!) {
+  demoHub(input: $input) {
+    zipCode
+    hubId
+    isFallbackHub
+    locality
+    isFallbackLocation
+    nextAvailableRouteIds
+  }
+}

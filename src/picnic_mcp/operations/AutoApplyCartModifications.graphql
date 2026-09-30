@@ -1,0 +1,398 @@
+# route: picnic-gateway
+mutation AutoApplyCartModifications($input: AutoApplyCartModificationsInput!) {
+  autoApplyCartModifications(input: $input) {
+    ...PicnicCartResponseFields
+  }
+}
+
+fragment PicnicCartResponseFields on PicnicCartResponse {
+  cart {
+    ...PicnicCartFields
+  }
+  validationIssues {
+    ...PicnicValidationIssueFields
+  }
+  items {
+    ...DqsItem
+  }
+  stores {
+    ...PicnicCartStoreFields
+  }
+  summary {
+    subtotal {
+      ...BasicMoney
+    }
+    tax {
+      ...BasicMoney
+    }
+    discount {
+      ...BasicMoney
+    }
+    orderMinimumDiscount {
+      ...BasicMoney
+    }
+    total {
+      ...BasicMoney
+    }
+    discountAsPercentOfOrderTotal
+    deductionDiscounts {
+      couponDiscount {
+        couponCode
+        amount {
+          ...BasicMoney
+        }
+        amountOnSubtotal {
+          ...BasicMoney
+        }
+        amountOnTax {
+          ...BasicMoney
+        }
+      }
+    }
+    deliveryFeeDue {
+      ...BasicMoney
+    }
+    deliveryFee {
+      ...BasicMoney
+    }
+    freeDeliveryThreshold {
+      ...BasicMoney
+    }
+    discountOnSubtotal {
+      ...BasicMoney
+    }
+    discountOnTax {
+      ...BasicMoney
+    }
+    subtotalAfterDiscount {
+      ...BasicMoney
+    }
+    taxAfterDiscount {
+      ...BasicMoney
+    }
+    discountOnValue {
+      ...BasicMoney
+    }
+  }
+  coupons {
+    ...RestrictedCouponDetailsFields
+  }
+  stipends {
+    ...StipendFields
+  }
+  stipendCoupons {
+    ...RestrictedCouponDetailsFields
+  }
+  mealContentsHash
+  batchOrder {
+    id
+    isActive
+    createdAt
+    name
+    coupon {
+      ...RestrictedCouponDetailsFields
+    }
+  }
+}
+
+fragment PicnicCartFields on PicnicCart {
+  id
+  version
+  customerItems {
+    ...PicnicCartCustomerItemFields
+  }
+  note
+  couponCode
+  deductions {
+    ...PicnicCartDeductionFields
+  }
+  batchOrderId
+  batchOrderCouponCode
+  cateringInfo {
+    ...PicnicCateringInfoFields
+  }
+}
+
+fragment PicnicCartCustomerItemFields on PicnicCartCustomerItem {
+  cartItemId
+  customerItem {
+    ...PicnicCustomerItemFields
+  }
+}
+
+fragment PicnicCustomerItemFields on PicnicCustomerItem {
+  customerItemId
+  storeId
+  note
+  quantity
+  price {
+    ...BasicMoney
+  }
+  displayPrice {
+    ...BasicMoney
+  }
+  name
+  photoUrl
+  modifiers {
+    ...PicnicCustomerItemModifierFields
+    modifiers {
+      ...PicnicCustomerItemModifierFields
+      modifiers {
+        ...PicnicCustomerItemModifierFields
+        modifiers {
+          ...PicnicCustomerItemModifierFields
+          modifiers {
+            ...PicnicCustomerItemModifierFields
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment BasicMoney on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment PicnicCustomerItemModifierFields on PicnicCustomerItemModifier {
+  modifierGroupId
+  customerItemId
+  name
+  price {
+    ...BasicMoney
+  }
+  quantity
+}
+
+fragment PicnicCartDeductionFields on Deduction {
+  coupon {
+    couponCode
+  }
+}
+
+fragment PicnicCateringInfoFields on PicnicCateringInfo {
+  guestCount
+}
+
+fragment PicnicValidationIssueFields on PicnicValidationIssue {
+  issueType
+  entityIds
+  entityType
+  storeId
+}
+
+fragment DqsItem on DqsItem {
+  id
+  storeId
+  name
+  description
+  enableSpecialInstructions
+  priceData {
+    price {
+      ...BasicMoney
+    }
+    displayPrice {
+      ...BasicMoney
+    }
+    minimumDisplayPrice {
+      ...BasicMoney
+    }
+    priceOverrides {
+      ...DqsPriceOverride
+    }
+  }
+  isSuspended
+  itemStatus
+  modifierGroupIds
+  contents {
+    isAlcoholic
+  }
+  photo {
+    ...DqsPhoto
+  }
+  photos {
+    ...DqsPhoto
+  }
+  localizedNames {
+    ...LocalizedStringFields
+  }
+  localizedDescriptions {
+    ...LocalizedStringFields
+  }
+  servingCount {
+    low
+    high
+  }
+  dietaryRestrictions {
+    propertyId
+    boolValue
+  }
+  allergens {
+    propertyId
+    boolValue
+  }
+}
+
+fragment DqsPriceOverride on DqsPriceOverride {
+  rules {
+    ... on DqsPathRule {
+      entityPath {
+        ...DqsEntityPath
+      }
+    }
+    ... on DqsFulfillmentModeRule {
+      fulfillmentMode
+    }
+    ... on DqsExternalSlugRule {
+      externalSlug
+    }
+  }
+  value {
+    ...BasicMoney
+  }
+}
+
+fragment DqsEntityPath on DqsEntityPath {
+  pathNode {
+    id
+    type
+  }
+}
+
+fragment DqsPhoto on DqsPhoto {
+  photoUrl
+  filename
+}
+
+fragment LocalizedStringFields on LocalizedString {
+  locale
+  value
+}
+
+fragment PicnicCartStoreFields on StoreContentResponse {
+  storeId
+  brandName
+  brandSlug
+  locationSlug
+  storeStatus
+  storeLogoUrl
+  badges {
+    ... on DqsStoreBadgeRemainingOrdersCapacity {
+      remainingOrdersCapacity
+    }
+  }
+  facilityMetadata {
+    facilityId
+    timezone
+  }
+  storefront {
+    data {
+      delivery {
+        maxBasketSize {
+          ...BasicMoney
+        }
+        minBasketSize {
+          ...BasicMoney
+        }
+      }
+    }
+  }
+}
+
+fragment RestrictedCouponDetailsFields on RestrictedCouponDetails {
+  description
+  code
+  couponType
+  start
+  startLocalDate
+  end
+  endLocalDate
+  enabled
+  version
+  promotionValue {
+    ...PromotionDiscountValueFields
+  }
+  daysOfWeek
+}
+
+fragment PromotionDiscountValueFields on PromotionDiscountValue {
+  ... on PromotionSubtotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionSubtotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValueFlat {
+    value {
+      ...MoneyFields
+    }
+  }
+  ... on PromotionOrderTotalValuePercentage {
+    percentage
+    maxValue {
+      ...MoneyFields
+    }
+  }
+  ... on MenuItemValue {
+    itemPromotionValues {
+      id
+      type
+      discountValue {
+        __typename
+        ... on MenuDiscountValueFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountUpdatedPriceFlat {
+          value {
+            ...BasicMoney
+          }
+        }
+        ... on MenuDiscountValuePercentage {
+          basisPoints
+        }
+      }
+    }
+  }
+}
+
+fragment MoneyFields on Money {
+  currencyCode
+  units
+  nanos
+}
+
+fragment StipendFields on Stipend {
+  stipendStatus
+  stipendCouponCode
+  stipendAllowlistAccessDates {
+    accessStartDate
+    accessEndDate
+  }
+  stipendCouponRemainingLimits {
+    periodValueLimits {
+      cadence
+      limit {
+        ...BasicMoney
+      }
+    }
+    effectiveValueLimit {
+      ...BasicMoney
+    }
+    remainingRedemptions
+    redemptionLimitCadence
+    periodResetTimes {
+      cadence
+      timestamp
+    }
+    effectiveResetTime
+  }
+}

@@ -1,0 +1,55 @@
+# route: cloudkitchens
+query OrderPendingRating($input: GetLastOrderPendingRatingInput!, $includeStoreDisplayFields: Boolean = true, $serviceSlug: String = "") {
+  getLastOrderPendingRating(input: $input) {
+    __typename
+    ... on OrderPendingRatingPayload {
+      order {
+        ...OrderPendingRatingFields
+      }
+    }
+  }
+}
+
+fragment OrderPendingRatingFields on EaterOrder {
+  id
+  customerItems {
+    quantity
+    name
+    store @include(if: $includeStoreDisplayFields) {
+      ...StoreDisplayFields
+    }
+  }
+  eaterOrderFulfillmentInfo {
+    __typename
+    ... on EaterOrderRestaurantDeliveryFulfillmentInfo {
+      deliveryHubInfo {
+        hubName
+      }
+    }
+  }
+  createdAt
+}
+
+fragment StoreDisplayFields on RestrictedStore {
+  id
+  restrictedBrand {
+    name
+  }
+  storefront(serviceSlug: $serviceSlug) {
+    files {
+      logoImage {
+        url
+      }
+    }
+  }
+  settings(serviceSlug: $serviceSlug) {
+    brandSlug
+    locationSlug
+  }
+  restrictedFacility {
+    ... on RestrictedFacility {
+      timezone
+      currencyCode
+    }
+  }
+}
